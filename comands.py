@@ -16,7 +16,3 @@ commands = [
 params = {"commands": commands}
 
 response = requests.post(url, json=params)
-
-
-
-
