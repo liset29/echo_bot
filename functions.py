@@ -1,6 +1,6 @@
 import requests
 import config as con
-from database import user
+from database import user, user_mes
 
 
 def start(chat_id):
@@ -13,7 +13,7 @@ def send_meow_message(chat_id, message):
 
 def delete_information(chat_id):
     user.delete("users_mess", chat_id)
-    user.delete("users", chat_id)
+    user_mes.delete("users", chat_id)
 
     requests.get(f"{con.SEND_MESSAGE_URL}{chat_id}&text=Твои данные удалены")
 

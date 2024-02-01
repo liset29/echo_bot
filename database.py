@@ -3,7 +3,16 @@ import config as con
 
 
 class User:
-    def __init__(self, connecting, cursor, table_name=None, data=None):
+    def __init__(self, table_name=None, data=None):
+
+        connecting = psycopg2.connect(
+            host=con.HOST,
+            user=con.USER,
+            password=con.PASSWORD,
+            database=con.DATABASE)
+        connecting.autocommit = True
+        cursor = connecting.cursor()
+
         self.con = connecting
         self.cur = cursor
 
@@ -23,21 +32,27 @@ class User:
         self.cur.execute(f"DELETE FROM {table_name} WHERE chat_id={chat_id}")
 
 
-def main(chat_id, first_name, last_name, message_user, time_mes):
-    if last_name:
-        User(connect, cursor, "users", {"chat_id": chat_id, "first_name": first_name, "last_name": last_name})
+class Message:
+    def __init__(self, table_name=None, data=None):
+        connecting = psycopg2.connect(
+            host=con.HOST,
+            user=con.USER,
+            password=con.PASSWORD,
+            database=con.DATABASE)
+        connecting.autocommit = True
+        cursor = connecting.cursor()
 
-    else:
-        User(connect, cursor, "users", {"chat_id": chat_id, "first_name": first_name})
+        self.con = connecting
+        self.cur = cursor
+        if table_name:
+            columns = ', '.join(data.keys())
+            values = ', '.join([f"'{value}'" for value in data.values()])
 
-    User(connect, cursor, "users_mess", {"chat_id": chat_id, "time": time_mes, "message_user": message_user})
+            self.cur.execute(f"INSERT INTO {table_name} ({columns}) VALUES ({values}) ")
+
+    def delete(self, table_name, chat_id):
+        self.cur.execute(f"DELETE FROM {table_name} WHERE chat_id={chat_id}")
 
 
-connect = psycopg2.connect(
-    host=con.HOST,
-    user=con.USER,
-    password=con.PASSWORD,
-    database=con.DATABASE)
-connect.autocommit = True
-cursor = connect.cursor()
-user = User(connect, cursor)
+user = User()
+user_mes = Message()

@@ -11,31 +11,37 @@ com.setMyCommands()
 
 while True:
     getting_updates = requests.get(f"{con.GET_UPDATES_URL}?offset={update_id + 1}").json()
-    if len(getting_updates["result"]) != 0:
+    if len(getting_updates["result"]) == 0:
+        continue
 
-        if "message" not in getting_updates["result"][0]:
-            update_id += 1
-            continue
+    if "message" not in getting_updates["result"][0]:
+        update_id += 1
+        continue
 
-        chat_id = getting_updates["result"][0]["message"]["chat"]["id"]
+    chat_id = getting_updates["result"][0]["message"]["chat"]["id"]
 
-        if "text" not in getting_updates["result"][0]["message"]:
-            func.send_danil(chat_id)
-            update_id += 1
-            continue
+    if "text" not in getting_updates["result"][0]["message"]:
+        func.send_danil(chat_id)
+        update_id += 1
+        continue
 
-        seconds = time.time()
-        time_mes = time.ctime(seconds)
-        message = getting_updates["result"][0]["message"]["text"]
-        first_name = getting_updates["result"][0]["message"]["from"]["first_name"]
-        last_name = False if "last_name" not in getting_updates["result"][0]["message"]["from"] else \
-            getting_updates["result"][0]["message"]["from"]["last_name"]
-        database.main(chat_id, first_name, last_name, message, time_mes)
+    seconds = time.time()
+    time_mes = time.ctime(seconds)
+    message = getting_updates["result"][0]["message"]["text"]
+    first_name = getting_updates["result"][0]["message"]["from"]["first_name"]
+    last_name = False if "last_name" not in getting_updates["result"][0]["message"]["from"] else \
+        getting_updates["result"][0]["message"]["from"]["last_name"]
+    if last_name:
+        database.User("users", {"chat_id": chat_id, "first_name": first_name, "last_name": last_name})
+    # database.main(chat_id, first_name, last_name, message, time_mes)
+    else:
+        database.User("users", {"chat_id": chat_id, "first_name": first_name})
+    database.Message("users_mess", {"chat_id": chat_id, "time": time_mes, "message_user": message})
 
-        if message in com.commands:
-            com.commands[message](chat_id)
-            update_id += 1
+    if message in com.commands:
+        com.commands[message](chat_id)
+        update_id += 1
 
-        else:
-            func.send_meow_message(chat_id, message)
-            update_id += 1
+    else:
+        func.send_meow_message(chat_id, message)
+        update_id += 1
