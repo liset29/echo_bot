@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-name=3124
+
 load_dotenv()
 API_URL = "https://api.telegram.org"
 
