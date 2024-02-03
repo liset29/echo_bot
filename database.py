@@ -28,9 +28,6 @@ class User:
         self.cur.execute(f"SELECT {columns} FROM {table_name} {params}")
         return self.cur.fetchall()
 
-    def delete(self, table_name, chat_id):
-        self.cur.execute(f"DELETE FROM {table_name} WHERE chat_id={chat_id}")
-
 
 class Message:
     def __init__(self, table_name=None, data=None):
@@ -54,5 +51,3 @@ class Message:
         self.cur.execute(f"DELETE FROM {table_name} WHERE chat_id={chat_id}")
 
 
-user = User()
-user_mes = Message()

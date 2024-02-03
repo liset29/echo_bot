@@ -2,7 +2,6 @@ import requests
 import config as con
 import functions as func
 import comands as com
-import database
 import time
 
 getting = requests.get(f"{con.GET_UPDATES_URL}?offset=-1").json()
@@ -31,17 +30,18 @@ while True:
     first_name = getting_updates["result"][0]["message"]["from"]["first_name"]
     last_name = False if "last_name" not in getting_updates["result"][0]["message"]["from"] else \
         getting_updates["result"][0]["message"]["from"]["last_name"]
-    if last_name:
-        database.User("users", {"chat_id": chat_id, "first_name": first_name, "last_name": last_name})
-    # database.main(chat_id, first_name, last_name, message, time_mes)
-    else:
-        database.User("users", {"chat_id": chat_id, "first_name": first_name})
-    database.Message("users_mess", {"chat_id": chat_id, "time": time_mes, "message_user": message})
+
+    if message == "/start":
+        func.start(chat_id, first_name, last_name)
+        update_id += 1
+        continue
+
+    func.add_message(chat_id, time_mes, message)
 
     if message in com.commands:
         com.commands[message](chat_id)
         update_id += 1
-
+        continue
     else:
         func.send_meow_message(chat_id, message)
         update_id += 1

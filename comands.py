@@ -3,7 +3,6 @@ import config as con
 import functions as func
 
 commands = {"/delete_information": func.delete_information,
-            "/start": func.start,
             "/my_inf": func.my_inf,
             "/for_danil": func.for_danil,
             "/all_message_user": func.all_message_user}
