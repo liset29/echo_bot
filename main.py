@@ -3,6 +3,7 @@ import config as con
 import functions as func
 import comands as com
 import time
+import redis_database as redis
 
 getting = requests.get(f"{con.GET_UPDATES_URL}?offset=-1").json()
 update_id = requests.get(f"{con.GET_UPDATES_URL}?offset=-1").json()["result"][0]["update_id"]
@@ -30,6 +31,10 @@ while True:
     first_name = getting_updates["result"][0]["message"]["from"]["first_name"]
     last_name = False if "last_name" not in getting_updates["result"][0]["message"]["from"] else \
         getting_updates["result"][0]["message"]["from"]["last_name"]
+
+    if redis.cache_message(chat_id, message):
+        update_id += 1
+        continue
 
     if message == "/start":
         func.start(chat_id, first_name, last_name)

@@ -19,4 +19,6 @@ GET_URL = f"{API_URL}/bot{TOKEN}"
 SEND_MESSAGE_URL = f"{GET_URL}/{SEND_MESSAGE}?chat_id="
 GET_UPDATES_URL = f"{GET_URL}/{GET_UPDATES}"
 
-
+RHOST = os.getenv("REDIS_HOST")
+PORT = os.getenv("PORT")
+DB = os.getenv("DB")

@@ -67,3 +67,7 @@ def all_message_user(chat_id):
 
 def add_message(chat_id, time_mes, message):
     database.Message("users_mesg", {"chat_id": chat_id, "time": time_mes, "message_user": message})
+
+
+def send_notification_dupl(chat_id):
+    requests.get(f"{con.SEND_MESSAGE_URL}{chat_id}&text=вы уже писали это сообщение")
