@@ -1,17 +1,10 @@
 import requests
 import config as con
-import database
-
-user = database.User()
-user_mes = database.Message()
+from echo_bot.func_db import Control
 
 
-def start(chat_id, first_name, last_name):
-    if last_name:
-        database.User("users", {"chat_id": chat_id, "first_name": first_name, "last_name": last_name})
-    else:
-        database.User("users", {"chat_id": chat_id, "first_name": first_name})
-
+def start(chat_id, name, last_name, user_name):
+    Control.insert_users(chat_id, user_name, name)
     requests.get(f"{con.SEND_MESSAGE_URL}{chat_id}&text=Привет, напиши что нибудь")
 
 
@@ -20,19 +13,14 @@ def send_meow_message(chat_id, message):
 
 
 def delete_information(chat_id):
-    # user.delete("users_mesg", chat_id)
-    user_mes.delete("users_mesg", chat_id)
-
+    Control.delete_information(chat_id)
     requests.get(f"{con.SEND_MESSAGE_URL}{chat_id}&text=Твои данные удалены")
 
 
 def my_inf(chat_id):
-    information = user.select_all(columns="first_name,last_name,users_mesg.message_user", table_name="users",
-                                  params=f"JOIN users_mesg USING(chat_id) WHERE users.chat_id={chat_id} ORDER BY time DESC")[
-        0]
-
+    information = Control.select_information(chat_id)
     requests.get(
-        f"{con.SEND_MESSAGE_URL}{chat_id}&text=Имя: {information[0]}, Фамилия: {information[1]}, Последнее сообщение: {information[2]}")
+        f"{con.SEND_MESSAGE_URL}{chat_id}&text=User_name: {information[0]}\n Имя: {information[1]}\n Количество сообщений: {information[2]}")
 
 
 def for_danil(chat_id):
@@ -55,18 +43,16 @@ def send_danil(chat_id):
 
 def all_message_user(chat_id):
     lst = []
-    all_message = user.select_all(table_name="users_mesg", columns="time,message_user",
-                                  params=f"where chat_id={chat_id}")
-    for i in all_message:
-        lst.append(i[0] + ": " + i[1])
+    resul = Control.select_all_message(chat_id)
+    for i in resul:
+        lst.append(f'{i[1]}:  {i[0]}')
 
     lst = "\n".join(lst)
+    requests.get(f"{con.SEND_MESSAGE_URL}{chat_id}&text=Твои сообщения:\n {lst}")
 
-    requests.get(f"{con.SEND_MESSAGE_URL}{chat_id}&text=Твои сообщения: {lst}")
 
-
-def add_message(chat_id, time_mes, message):
-    database.Message("users_mesg", {"chat_id": chat_id, "time": time_mes, "message_user": message})
+def add_message(chat_id, time_mes, message, user_name, name):
+    Control.insert_message(chat_id, message)
 
 
 def send_notification_dupl(chat_id):

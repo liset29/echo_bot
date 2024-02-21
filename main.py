@@ -28,7 +28,8 @@ while True:
     seconds = time.time()
     time_mes = time.ctime(seconds)
     message = getting_updates["result"][0]["message"]["text"]
-    first_name = getting_updates["result"][0]["message"]["from"]["first_name"]
+    name = getting_updates["result"][0]["message"]["from"]["first_name"]
+    user_name = getting_updates['result'][0]['message']['chat']['username']
     last_name = False if "last_name" not in getting_updates["result"][0]["message"]["from"] else \
         getting_updates["result"][0]["message"]["from"]["last_name"]
 
@@ -37,11 +38,11 @@ while True:
         continue
 
     if message == "/start":
-        func.start(chat_id, first_name, last_name)
+        func.start(chat_id, name, last_name, user_name)
         update_id += 1
         continue
 
-    func.add_message(chat_id, time_mes, message)
+    func.add_message(chat_id, time_mes, message, user_name, name)
 
     if message in com.commands:
         com.commands[message](chat_id)

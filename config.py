@@ -9,6 +9,7 @@ HOST = os.getenv("HOST")
 USER = os.getenv("USER")
 PASSWORD = os.getenv("PASSWORD")
 DATABASE = os.getenv("DATABASE")
+PORT_ORM=os.getenv("PORT_ORM")
 PHOTO_BOSS = os.getenv("PHOTO_BOSS")
 PHOTO_NO_BOSS = os.getenv("PHOTO_NO_BOSS")
 
